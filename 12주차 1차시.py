@@ -1,3 +1,6 @@
+import pickle
+
+
 
 # Todolist
 # 1. 아이템 추가시 수량도 인자로 받음
@@ -70,10 +73,40 @@ def use_item():
             print("잘못된 번호를 입력하셨습니다.")
 
 # key = item 이름, value = 수량
-inventory = {}
+
 # todolist 3
 # 캐릭터 만들기
-character = {}
+# try 사용해 보기
+'''
+try:
+    load_file = open("game_save.p","rb")
+    character = pickle.load(load_file)
+    load_file.close()
+    print("#############################")
+    print("#저장된 파일을 읽어왔습니다.#")
+    print("#############################")
+except:
+    print("###########################")
+    print("# 읽어올 파일이 없습니다. #")
+    print("###########################")
+    character = {}
+'''
+
+import os
+
+if os.path.isfile("game_save.p"):
+    load_file = open("game_save.p","rb")
+    character = pickle.load(load_file)
+    load_file.close()
+    print("#############################")
+    print("#저장된 파일을 읽어왔습니다.#")
+    print("#############################")
+else:
+    print("###########################")
+    print("# 읽어올 파일이 없습니다. #")
+    print("###########################")
+    character = {}
+
 select_character = None
 def new_character (name, t_character):
     if check_character (name, t_character):
@@ -87,7 +120,7 @@ def check_character (name, t_character):
     return name in t_character
 
 def print_characterMenu():
-    print("0.끝내기")
+    print("0.저장하고 끝내기")
     print("1.캐릭터 추가")
     print("2.캐릭터 조회")
     print("3.캐릭터 선택")
@@ -97,6 +130,10 @@ while True:
     print_characterMenu()
     option = int(input("메뉴를 선택해주세요.)"))
     if option == 0:
+        save_file = (open("game_save.p","wb"))
+        pickle.dump(character, save_file)
+        save_file.close()
+        print("진행 상황이 저장되었습니다.")
         print("종료되었습니다.")
         break
     elif option == 1:
@@ -116,6 +153,14 @@ while True:
             print(select_character+"이 선택되었습니다.")
         else:
             print(temp_name+"은 존재하지 않는 캐릭터 입니다.")
+    elif option == 4:
+        if select_character == None:
+           print("3번 메뉴로 캐릭터를 선택해주세요.")
+        else:
+            print("선택된 캐릭터는 "+select_character+"입니다.")
+            inventory = character[select_character]
+            use_item(inventory)
+
 # 캐릭터 이름으로 식별
 # 캐릭터 인벤토리
 # 캐릭터 장착기능
